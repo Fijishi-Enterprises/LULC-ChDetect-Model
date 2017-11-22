@@ -1,3 +1,1 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:2cb0867f51ade39635b8b3353171df85a5b8534f60cc7280a40f27838a49393a
-size 192
+category,forest,shrub,grass,crops,urban,snow,sparseforest,0,2,3,1,4,5,6shrub,2,0,3,1,4,5,6grass,1,2,0,3,5,6,4crops,2,3,1,0,5,6,4urban,1,4,3,2,0,6,5snow,2,3,4,1,5,0,6sparse,2,3,4,1,5,6,0
