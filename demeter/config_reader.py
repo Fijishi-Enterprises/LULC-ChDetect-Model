@@ -23,10 +23,29 @@ class ValidationException(Exception):
 
 class ReadConfig:
 
-    def __init__(self, config_file, run_single_land_region=None):
+    def __init__(self, config_file=None, output_directory=None, observed_allocation_file=None,
+                 projected_allocation_file=None, transition_priority_file=None, processing_order_file=None,
+                 constraint_weighting_file=None, kernel_density_weighting_file=None, observed_data_file=None,
+                 projected_data_file=None, region_name_file=None, parent_model_name=None, land_metric=None,
+                 scenario=None, run_description=None, observed_id_field=None, start_year=None, end_year=None,
+                 use_constraints=True, spatial_resolution=0.05, errortol=0.001, time_step=1, proj_factor=1000,
+                 run_diagnostic=False, intensification_ratio=0.5, use_stochastic_expansion=False,
+                 selection_threshold=0.6, kernel_distance=10, target_years_output=None, write_tabular=True,
+                 output_units='fraction', run_single_land_region=None):
 
-        # check ini file
-        ini_file = config_file
+        if config_file is None:
+            output_directory = None
+            observed_allocation_file = None
+            projected_allocation_file = None
+            transition_priority_file = None
+            processing_order_file = None,
+            constraint_weighting_file = None, kernel_density_weighting_file = None, observed_data_file = None,
+            projected_data_file = None, region_name_file = None, parent_model_name = None, land_metric = None,
+            scenario = None, run_description = None, observed_id_field = None, start_year = None, end_year = None,
+            use_constraints = True, spatial_resolution = 0.05, errortol = 0.001, time_step = 1, proj_factor = 1000,
+            run_diagnostic = False, intensification_ratio = 0.5, use_stochastic_expansion = False,
+            selection_threshold = 0.6, kernel_distance = 10, target_years_output = None, write_tabular = True,
+            output_units = 'fraction', run_single_land_region = None
 
         # to run a single land region, None to run global all at once
         self.run_single_land_region = run_single_land_region
@@ -38,10 +57,10 @@ class ReadConfig:
         self.dt = datetime.datetime.now().strftime('%Y-%m-%d_%Hh%Mm%Ss')
 
         # check and validate ini file exists
-        self.check_exist(ini_file, 'file', self.log)
+        self.check_exist(config_file, 'file', self.log)
 
         # instantiate config object
-        self.config = ConfigObj(ini_file)
+        self.config = ConfigObj(config_file)
 
         # create and validate structure full paths
         s = self.config['STRUCTURE']
