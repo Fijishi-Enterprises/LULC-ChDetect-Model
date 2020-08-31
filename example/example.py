@@ -23,9 +23,3 @@ if __name__ == "__main__":
 
     # run all time steps as set in config file
     dm.execute()
-
-    # run a random ensemble of parameters
-    # dm.ensemble()
-
-    # clean up
-    del dm
