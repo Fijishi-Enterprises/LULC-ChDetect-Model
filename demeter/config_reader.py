@@ -43,10 +43,11 @@ class ReadConfig:
         # create and validate structure full paths
         s = self.config['STRUCTURE']
 
-        if root_dir is None:
-            self.root_dir = self.check_exist(root_dir, 'dir', self.log)
-        else:
+        try:
             self.root_dir = self.check_exist(s['root_dir'], 'dir', self.log)
+
+        except KeyError:
+            self.root_dir = self.check_exist(root_dir, 'dir', self.log)
 
         self.in_dir = self.check_exist(os.path.join(self.root_dir, s['in_dir']), 'dir', self.log)
         self.out_dir = self.get_outdir(s['out_dir'])
@@ -285,10 +286,12 @@ class ReadConfig:
             log.error("File not found:  {0}".format(f))
             log.error("Confirm path and retry.")
             raise IOError('File not found: {0}. Confirm path and retry.'.format(f))
+
         elif kind == 'dir' and os.path.isdir(f) is False:
             log.error("Directory not found:  {0}".format(f))
             log.error("Confirm path and retry.")
             raise IOError('Directory not found: {0}. Confirm path and retry.'.format(f))
+
         else:
             return f
 
