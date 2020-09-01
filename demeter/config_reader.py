@@ -12,6 +12,7 @@ import datetime
 import logging
 import os
 import sys
+import pkg_resources
 
 from configobj import ConfigObj
 
@@ -22,6 +23,9 @@ class ValidationException(Exception):
 
 
 class ReadConfig:
+
+    # specs file for expected configuration
+    CONFIGSPECS = pkg_resources.resource_filename('demeter', 'data/configspec.ini')
 
     def __init__(self, config_file, root_dir=None):
 
@@ -38,7 +42,7 @@ class ReadConfig:
         self.check_exist(ini_file, 'file', self.log)
 
         # instantiate config object
-        self.config = ConfigObj(ini_file)
+        self.config = ConfigObj(ini_file, configspec=ReadConfig.CONFIGSPECS)
 
         # create and validate structure full paths
         s = self.config['STRUCTURE']
