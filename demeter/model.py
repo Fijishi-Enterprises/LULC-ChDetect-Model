@@ -20,13 +20,13 @@ from demeter.staging import Stage
 
 
 class ValidationException(Exception):
-    def __init__(self,*args,**kwargs):
-        Exception.__init__(self,*args,**kwargs)
+    def __init__(self, *args, **kwargs):
+        Exception.__init__(self, *args, **kwargs)
 
 
 class Demeter(Logger):
 
-    def __init__(self, root_dir=None, config=None):
+    def __init__(self, config=None, root_dir=None):
 
         self.dir = root_dir
         self.ini = config
@@ -69,7 +69,8 @@ class Demeter(Logger):
         Setup model.
         """
         # instantiate config
-        self.c = ReadConfig(self.ini, self.dir)
+        print("Here:  ".format(self.dir))
+        self.c = ReadConfig(config_file=self.ini, root_dir=self.dir)
 
         # instantiate log file
         self.make_logfile()

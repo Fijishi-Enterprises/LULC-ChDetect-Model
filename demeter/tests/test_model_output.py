@@ -6,6 +6,7 @@ Tests to ensure high-level functionality and outputs remain consistent.
 
 import os
 import pkg_resources
+import shutil
 import unittest
 
 import pandas as pd
@@ -26,8 +27,6 @@ class TestOutputs(unittest.TestCase):
         # read in comp data from rasters to arrays
         comp_df = pd.read_csv(TestOutputs.COMP_2015)
 
-        print(TestOutputs.CONFIG_FILE)
-
         # run demeter
         run = Demeter(config=TestOutputs.CONFIG_FILE, root_dir=TestOutputs.RUN_DIR)
         run.execute()
@@ -39,6 +38,9 @@ class TestOutputs(unittest.TestCase):
 
         # test equality
         pd.testing.assert_frame_equal(comp_df, run_df)
+
+        # remove run directory
+        shutil.rmtree(run.c.out_dir)
 
 
 if __name__ == '__main__':
