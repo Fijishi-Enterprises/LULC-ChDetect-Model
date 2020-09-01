@@ -1,0 +1,1 @@
+This output directory is populated during a run with the model outputs.  The run directory is removed after the tests have completed.
