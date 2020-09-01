@@ -29,7 +29,7 @@ class TestOutputs(unittest.TestCase):
         print(TestOutputs.CONFIG_FILE)
 
         # run demeter
-        run = Demeter(config=TestOutputs.CONFIG_FILE)
+        run = Demeter(config=TestOutputs.CONFIG_FILE, root_dir=TestOutputs.RUN_DIR)
         run.execute()
 
         # read in run data from rasters to arrays
