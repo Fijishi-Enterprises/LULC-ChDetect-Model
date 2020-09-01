@@ -17,13 +17,13 @@ from configobj import ConfigObj
 
 
 class ValidationException(Exception):
-    def __init__(self,*args,**kwargs):
-        Exception.__init__(self,*args,**kwargs)
+    def __init__(self, *args, **kwargs):
+        Exception.__init__(self, *args, **kwargs)
 
 
 class ReadConfig:
 
-    def __init__(self, config_file):
+    def __init__(self, config_file, root_dir=None):
 
         # check ini file
         ini_file = config_file
@@ -42,7 +42,12 @@ class ReadConfig:
 
         # create and validate structure full paths
         s = self.config['STRUCTURE']
-        self.root_dir = self.check_exist(s['root_dir'], 'dir', self.log)
+
+        if root_dir is None:
+            self.root_dir = self.check_exist(root_dir, 'dir', self.log)
+        else:
+            self.root_dir = self.check_exist(s['root_dir'], 'dir', self.log)
+
         self.in_dir = self.check_exist(os.path.join(self.root_dir, s['in_dir']), 'dir', self.log)
         self.out_dir = self.get_outdir(s['out_dir'])
 
