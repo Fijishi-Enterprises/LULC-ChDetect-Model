@@ -1,7 +1,10 @@
-"""test__outputs.py
+"""test_model_outputs.py
+
 Tests to ensure high-level functionality and outputs remain consistent.
+
 @author Chris R. Vernon (chris.vernon@pnnl.gov)
 @license BSD 2-Clause
+
 """
 
 import os

@@ -69,7 +69,6 @@ class Demeter(Logger):
         Setup model.
         """
         # instantiate config
-        print("Here:  ".format(self.dir))
         self.c = ReadConfig(config_file=self.ini, root_dir=self.dir)
 
         # instantiate log file
@@ -160,14 +159,9 @@ if __name__ == '__main__':
         print('Exiting...')
         raise ValidationException
 
-    # instantiate demeter
+    # instantiate and run demeter
     dm = Demeter(config=ini)
-
-    # run user specified call
-    if mode == 'ensemble':
-        dm.ensemble()
-    else:
-        dm.execute()
+    dm.execute()
 
     # clean up
     del dm
