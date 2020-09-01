@@ -10,7 +10,7 @@ Open source under license BSD 2-Clause - see LICENSE and DISCLAIMER
 
 import os
 
-from demeter.model import Demeter
+from demeter import Demeter
 
 
 if __name__ == "__main__":
