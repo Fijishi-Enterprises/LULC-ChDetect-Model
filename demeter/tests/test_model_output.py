@@ -21,29 +21,44 @@ class TestOutputs(unittest.TestCase):
     """Test configuration integrity."""
 
     RUN_DIR = pkg_resources.resource_filename('demeter', 'tests/data')
-    COMP_2015 = pkg_resources.resource_filename('demeter', 'tests/data/comp_data/landcover_2015_timestep.csv')
     CONFIG_FILE = pkg_resources.resource_filename('demeter', 'tests/data/config.ini')
+    COMP_DF = pd.read_csv(pkg_resources.resource_filename('demeter', 'tests/data/comp_data/landcover_2010_timestep.csv'))
 
-    def test_proj_outputs(self):
-        """Test for projection outputs"""
+    def test_proj_outputs_using_args(self):
+        """Test for projection outputs by passing arguments"""
 
-        # read in comp data from rasters to arrays
-        comp_df = pd.read_csv(TestOutputs.COMP_2015)
-
-        # run demeter
-        run = Demeter(config=TestOutputs.CONFIG_FILE, root_dir=TestOutputs.RUN_DIR)
+        # run demeter without using configuration file
+        run = Demeter(run_dir=TestOutputs.RUN_DIR, target_years_output=2010)
         run.execute()
 
         # read in run data from rasters to arrays
-        output_dir = os.path.split(run.c.out_dir)[-1]
-        run_2015 = os.path.join(TestOutputs.RUN_DIR, 'outputs', output_dir, 'spatial_landcover_tabular', 'landcover_2015_timestep.csv')
-        run_df = pd.read_csv(run_2015)
+        output_dir = os.path.split(run.c.output_dir)[-1]
+        run_2010 = os.path.join(TestOutputs.RUN_DIR, 'outputs', output_dir, 'spatial_landcover_tabular', 'landcover_2010_timestep.csv')
+        run_df = pd.read_csv(run_2010)
 
         # test equality
-        pd.testing.assert_frame_equal(comp_df, run_df)
+        pd.testing.assert_frame_equal(TestOutputs.COMP_DF, run_df)
 
         # remove run directory
-        shutil.rmtree(run.c.out_dir)
+        shutil.rmtree(run.c.output_dir)
+
+    def test_proj_outputs_using_config(self):
+        """Test for projection outputs using a config file"""
+
+        # run demeter without using configuration file
+        run = Demeter(config_file=TestOutputs.CONFIG_FILE, run_dir=TestOutputs.RUN_DIR)
+        run.execute()
+
+        # read in run data from rasters to arrays
+        output_dir = os.path.split(run.c.output_dir)[-1]
+        run_2010 = os.path.join(TestOutputs.RUN_DIR, 'outputs', output_dir, 'spatial_landcover_tabular', 'landcover_2010_timestep.csv')
+        run_df = pd.read_csv(run_2010)
+
+        # test equality
+        pd.testing.assert_frame_equal(TestOutputs.COMP_DF, run_df)
+
+        # remove run directory
+        shutil.rmtree(run.c.output_dir)
 
 
 if __name__ == '__main__':

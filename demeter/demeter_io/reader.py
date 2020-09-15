@@ -315,7 +315,7 @@ def read_base(log, c, spat_landclasses, sequence_metric_dict, metric_seq, region
     :param region_seq:                  An ordered list of expected region ids
     :return:
     """
-    df = pd.read_csv(c.observed_lu_file)
+    df = pd.read_csv(c.observed_lu_file, compression='infer')
 
     # rename columns as lower case
     df.columns = [i.lower() for i in df.columns]

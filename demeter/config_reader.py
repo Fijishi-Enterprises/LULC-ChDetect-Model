@@ -12,7 +12,6 @@ import datetime
 import logging
 import os
 import sys
-import pkg_resources
 
 from configobj import ConfigObj
 
@@ -65,7 +64,7 @@ class ReadConfig:
             self.constraints_file = os.path.join(self.allocation_dir, self.config.get('constraints_file', 'constraint_weighting.csv'))
 
             # observed data
-            self.observed_lu_file = os.path.join(self.observed_dir, self.config.get('observed_lu_file', 'modis_2005_lc_monfreda_0p25deg_reg32aez.csv'))
+            self.observed_lu_file = os.path.join(self.observed_dir, self.config.get('observed_lu_file', 'modis_2005_lc_monfreda_0p25deg_reg32aez.zip'))
 
             # projected data
             self.projected_lu_file = os.path.join(self.projected_dir, self.config.get('projected_lu_file', 'gcam_ref_scenario_reg32aez.csv'))
@@ -136,9 +135,12 @@ class ReadConfig:
             self.scenario = run_params.get('scenario', 'example')
 
             # project directories
-            self.run_dir = self.config.get('STRUCTURE', None).get('run_dir', None)
-            self.input_dir = os.path.join(self.run_dir, self.config.get('STRUCTURE').get('input_dir', 'inputs'))
-            self.output_dir = self.get_outdir(os.path.join(self.run_dir, self.config.get('STRUCTURE').get('output_dir', 'outputs')))
+            structure_params = self.config.get('STRUCTURE', None)
+
+            # use the run directory provided by the user if present
+            self.run_dir = params.get('run_dir', structure_params.get('run_dir', None))
+            self.input_dir = os.path.join(self.run_dir, structure_params.get('in_dir', 'inputs'))
+            self.output_dir = self.get_outdir(os.path.join(self.run_dir, structure_params.get('out_dir', 'outputs')))
 
             # input data directories
             input_params = self.config.get('INPUTS', None)
@@ -159,7 +161,7 @@ class ReadConfig:
 
             # observed data
             observed_params = input_params.get('OBSERVED', None)
-            self.observed_lu_file = os.path.join(self.observed_dir, observed_params.get('observed_lu_file', 'modis_2005_lc_monfreda_0p25deg_reg32aez.csv'))
+            self.observed_lu_file = os.path.join(self.observed_dir, observed_params.get('observed_lu_file', 'modis_2005_lc_monfreda_0p25deg_reg32aez.zip'))
 
             # projected data
             projected_params = input_params.get('PROJECTED', None)
@@ -202,7 +204,7 @@ class ReadConfig:
             self.start_year = self.ck_yr(run_params.get('start_year', '2005'), 'start_year')
             self.end_year = self.ck_yr(run_params.get('end_year', '2010'), 'end_year')
             self.use_constraints = self.valid_integer(run_params.get('use_constraints', 1), 'use_constraints', [0, 1])
-            self.spatial_resolution = self.valid_limit(run_params.get('spatial_resolution', 0.25), 'spatial_resolution', [0.0, 1000000.0], )
+            self.spatial_resolution = self.valid_limit(run_params.get('spatial_resolution', 0.25), 'spatial_resolution', [0.0, 1000000.0], 'float')
             self.errortol = self.valid_limit(run_params.get('errortol', 0.001), 'errortol', [0.0, 1000000.0], 'float')
             self.timestep = self.valid_limit(run_params.get('timestep', 1), 'timestep', [1, 1000000], 'int')
             self.proj_factor = self.valid_limit(run_params.get('proj_factor', 1000), 'proj_factor', [1, 10000000000], 'int')
