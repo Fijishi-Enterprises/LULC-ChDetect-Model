@@ -65,7 +65,7 @@ class ProcessStep:
         self.log.info("Applying intensification: pass {0} for time step {1}...".format(pass_num, self.step))
 
         # set pass dir
-        od = 'self.c.luc_intense_p{0}_dir'.format(pass_num)
+        od = 'self.c.intensification_pass{0}_output_dir'.format(pass_num)
         out_dir = eval(od)
 
         # apply intensification
@@ -169,7 +169,7 @@ class ProcessStep:
         map_grid_chg = map_grid_now - map_grid_prev
 
         # optionally map time step
-        if (self.c.map_luc == 1) and (self.step in self.c.target_years_output):
+        if (self.c.map_luc_pft == 1) and (self.step in self.c.target_years_output):
 
             self.log.info("Mapping land cover change for time step {0}...".format(self.step))
 
@@ -188,7 +188,7 @@ class ProcessStep:
             wdr.write_transitions(self.s, self.c, self.step, self.transitions)
 
         # optionally create land cover transition maps
-        if (self.c.save_transition_maps == 1) and (self.step in self.c.target_years_output):
+        if (self.c.map_transitions == 1) and (self.step in self.c.target_years_output):
 
             self.log.info("Saving land cover transition maps for time step {0}...".format(self.step))
 
