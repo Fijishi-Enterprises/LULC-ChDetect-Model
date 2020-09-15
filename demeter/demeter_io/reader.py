@@ -315,7 +315,7 @@ def read_base(log, c, spat_landclasses, sequence_metric_dict, metric_seq, region
     :param region_seq:                  An ordered list of expected region ids
     :return:
     """
-    df = pd.read_csv(c.first_mod_file)
+    df = pd.read_csv(c.observed_lu_file)
 
     # rename columns as lower case
     df.columns = [i.lower() for i in df.columns]
@@ -340,7 +340,7 @@ def read_base(log, c, spat_landclasses, sequence_metric_dict, metric_seq, region
         spat_metric_region = None
 
     # create array of grid ids
-    spat_grid_id = df[c.pkey].values
+    spat_grid_id = df[c.observed_id_field].values
 
     # create array of water areas
     try:
@@ -383,14 +383,14 @@ def read_base(log, c, spat_landclasses, sequence_metric_dict, metric_seq, region
         spat_region[spat_region == 30] = 11
 
     # cell area from lat: lat_correction_factor * (lat_km at equator * lon_km at equator) * (resolution squared) = sqkm
-    cellarea = np.cos(np.radians(spat_coords[:, 0])) * (111.32 * 110.57) * (c.resin**2)
+    cellarea = np.cos(np.radians(spat_coords[:, 0])) * (111.32 * 110.57) * (c.spatial_resolution**2)
 
     # create an array with the actual percentage of the grid cell included in the data; some are cut by AEZ or Basin
     #   polygons others have no-data in land cover
-    celltrunk = (np.sum(spat_ludata, axis=1) + spat_water) / (c.resin ** 2)
+    celltrunk = (np.sum(spat_ludata, axis=1) + spat_water) / (c.spatial_resolution ** 2)
 
     # adjust land cover area based on the percentage of the grid cell represented
-    spat_ludata = spat_ludata / (c.resin ** 2) * np.transpose([cellarea, ] * len(spat_landclasses))
+    spat_ludata = spat_ludata / (c.spatial_resolution ** 2) * np.transpose([cellarea, ] * len(spat_landclasses))
 
     return [spat_ludata, spat_water, spat_coords, spat_metric_region, spat_grid_id, spat_metric, spat_region, ngrids,
             cellarea, celltrunk, sequence_metric_dict]
