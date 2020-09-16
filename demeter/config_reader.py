@@ -38,193 +38,126 @@ class ReadConfig:
 
         if self.config_file is None:
 
-            self.config = params
-
-            # scenario is used to build the output directory name
-            self.scenario = self.config.get('scenario', 'example')
-
-            # project directories
-            self.run_dir = self.config.get('run_dir', None)
-            self.input_dir = os.path.join(self.run_dir, self.config.get('input_dir', 'inputs'))
-            self.output_dir = self.get_outdir(os.path.join(self.run_dir, self.config.get('output_dir', 'outputs')))
-
-            # input data directories
-            self.allocation_dir = os.path.join(self.input_dir, self.config.get('allocation_dir', 'allocation'))
-            self.observed_dir = os.path.join(self.input_dir, self.config.get('observed_dir', 'observed'))
-            self.constraints_dir = os.path.join(self.input_dir, self.config.get('constraints_dir', 'constraints'))
-            self.projected_dir = os.path.join(self.input_dir, self.config.get('projected_dir', 'projected'))
-            self.reference_dir = os.path.join(self.input_dir, self.config.get('reference_dir', 'reference'))
-
-            # allocation files
-            self.spatial_allocation_file = os.path.join(self.allocation_dir, self.config.get('spatial_allocation_file', 'spatial_allocation.csv'))
-            self.gcam_allocation_file = os.path.join(self.allocation_dir, self.config.get('gcam_allocation_file', 'gcam_allocation.csv'))
-            self.kernel_allocation_file = os.path.join(self.allocation_dir, self.config.get('kernel_allocation_file', 'kernel_density_weighting.csv'))
-            self.transition_order_file = os.path.join(self.allocation_dir, self.config.get('transition_order_file', 'transition_priority.csv'))
-            self.treatment_order_file = os.path.join(self.allocation_dir, self.config.get('treatment_order_file', 'treatment_order.csv'))
-            self.constraints_file = os.path.join(self.allocation_dir, self.config.get('constraints_file', 'constraint_weighting.csv'))
-
-            # observed data
-            self.observed_lu_file = os.path.join(self.observed_dir, self.config.get('observed_lu_file', 'modis_2005_lc_monfreda_0p25deg_reg32aez.zip'))
-
-            # projected data
-            self.projected_lu_file = os.path.join(self.projected_dir, self.config.get('projected_lu_file', 'gcam_ref_scenario_reg32aez.csv'))
-
-            # reference data
-            self.gcam_region_names_file = os.path.join(self.reference_dir, self.config.get('gcam_region_names_file', 'gcam_regions_32.csv'))
-            self.gcam_region_coords_file = os.path.join(self.reference_dir, self.config.get('gcam_region_coords_file', 'regioncoord.csv'))
-            self.gcam_country_coords_file = os.path.join(self.reference_dir, self.config.get('gcam_country_coords_file', 'countrycoord.csv'))
-
-            # diagnostics
-            self.diagnostics_output_dir = os.path.join(self.output_dir, self.config.get('diagnostics_output_dir', 'diagnostics'))
-            self.harmonization_coefficent_array = os.path.join(self.diagnostics_output_dir, self.config.get('harmonization_coefficent_array', 'harmonization_coeff.npy'))
-            self.intensification_pass1_file = os.path.join(self.diagnostics_output_dir, self.config.get('intensification_pass1_file', 'intensification_pass_one_diag.csv'))
-            self.intensification_pass2_file = os.path.join(self.diagnostics_output_dir, self.config.get('intensification_pass2_file', 'intensification_pass_two_diag.csv'))
-            self.extensification_file = os.path.join(self.diagnostics_output_dir, self.config.get('extensification_file', 'expansion_diag.csv'))
-
-            # outputs directories
-            self.log_output_dir = os.path.join(self.output_dir, self.config.get('log_output_dir', 'log_files'))
-            self.kernel_maps_output_dir = os.path.join(self.output_dir, self.config.get('kernel_maps_output_dir', 'kernel_density'))
-            self.transitions_tabular_output_dir = os.path.join(self.output_dir, self.config.get('transitions_tabular_output_dir', 'transition_tabular'))
-            self.transitions_maps_output_dir = os.path.join(self.output_dir, self.config.get('transitions_maps_output_dir', 'transition_maps'))
-            self.intensification_pass1_output_dir = os.path.join(self.output_dir, self.config.get('intensification_pass1_output_dir', 'luc_intensification_pass1'))
-            self.intensification_pass2_output_dir = os.path.join(self.output_dir, self.config.get('intensification_pass2_output_dir', 'luc_intensification_pass2'))
-            self.extensification_output_dir = os.path.join(self.output_dir, self.config.get('extensification_output_dir', 'luc_extensification'))
-            self.luc_timestep = os.path.join(self.output_dir, self.config.get('luc_timestep', 'luc_timestep'))
-            self.lu_csv_output_dir = os.path.join(self.output_dir, self.config.get('lu_csv_output_dir', 'spatial_landcover_tabular'))
-            self.lu_netcdf_output_dir = os.path.join(self.output_dir, self.config.get('lu_netcdf_output_dir', 'spatial_landcover_netcdf'))
-            self.lu_shapefile_output_dir = os.path.join(self.output_dir, self.config.get('lu_shapefile_output_dir', 'spatial_landcover_shapefile'))
-
-            # run parameters
-            self.model = self.config.get('model', 'GCAM')
-            self.metric = self.config.get('metric', 'AEZ')
-            self.run_desc = self.config.get('run_desc', 'demeter_example')
-            self.agg_level = self.valid_integer(self.config.get('agg_level', 2), 'agg_level', [1, 2])
-            self.observed_id_field = self.config.get('observed_id_field', 'fid')
-            self.start_year = self.ck_yr(self.config.get('start_year', '2005'), 'start_year')
-            self.end_year = self.ck_yr(self.config.get('end_year', '2010'), 'end_year')
-            self.use_constraints = self.valid_integer(self.config.get('use_constraints', 1), 'use_constraints', [0, 1])
-            self.spatial_resolution = self.valid_limit(self.config.get('spatial_resolution', 0.25), 'spatial_resolution', [0.0, 1000000.0], 'float')
-            self.errortol = self.valid_limit(self.config.get('errortol', 0.001), 'errortol', [0.0, 1000000.0], 'float')
-            self.timestep = self.valid_limit(self.config.get('timestep', 1), 'timestep', [1, 1000000], 'int')
-            self.proj_factor = self.valid_limit(self.config.get('proj_factor', 1000), 'proj_factor', [1, 10000000000], 'int')
-            self.diagnostic = self.valid_integer(self.config.get('diagnostic', 0), 'diagnostic', [0, 1])
-            self.intensification_ratio = self.valid_limit(self.config.get('intensification_ratio', 0.8), 'intensification_ratio', [0.0, 1.0], 'float')
-            self.stochastic_expansion = self.valid_integer(self.config.get('stochastic_expansion', 0), 'stochastic_expansion', [0, 1])
-            self.selection_threshold = self.valid_limit(self.config.get('selection_threshold', 0.75), 'intensification_ratio', [0.0, 1.0], 'float')
-            self.kernel_distance = self.valid_limit(self.config.get('kernel_distance', 10), 'kernel_distance', [0, 10000000000], 'int')
-            self.map_kernels = self.valid_integer(self.config.get('map_kernels', 0), 'map_kernels', [0, 1])
-            self.map_luc_pft = self.valid_integer(self.config.get('map_luc_pft', 0), 'map_luc_pft', [0, 1])
-            self.map_luc_steps = self.valid_integer(self.config.get('map_luc_steps', 0), 'map_luc_steps', [0, 1])
-            self.map_transitions = self.valid_integer(self.config.get('map_transitions', 0), 'map_transitions', [0, 1])
-            self.target_years_output = self.set_target(self.config.get('target_years_output', 'all'))
-            self.save_tabular = self.valid_integer(self.config.get('save_tabular', 1), 'save_tabular', [0, 1])
-            self.tabular_units = self.valid_string(self.config.get('tabular_units', 'sqkm'), 'tabular_units', ['sqkm', 'fraction'])
-            self.save_transitions = self.valid_integer(self.config.get('save_transitions', 0), 'save_transitions', [0, 1])
-            self.save_shapefile = self.valid_integer(self.config.get('save_shapefile', 0), 'save_shapefile', [0, 1])
-            self.save_netcdf_yr = self.valid_integer(self.config.get('save_netcdf_yr', 0), 'save_netcdf_yr', [0, 1])
-            self.save_netcdf_lc = self.valid_integer(self.config.get('save_netcdf_lc', 0), 'save_netcdf_lc', [0, 1])
-            self.save_ascii_max = self.valid_integer(self.config.get('save_ascii_max', 0), 'save_ascii_max', [0, 1])
+            # these are broken out to maintain consistency with the configuration file sections
+            structure_params = params
+            input_params = params
+            allocation_params = params
+            observed_params = params
+            projected_params = params
+            reference_params = params
+            output_params = params
+            diagnostic_params = params
+            run_params = params
 
         else:
 
             # instantiate config object
             self.config = ConfigObj(self.check_exist(self.config_file, 'file', self.log))
 
-            # scenario is used to build the output directory name
-            run_params = self.config.get('PARAMS', None)
-            self.scenario = run_params.get('scenario', 'example')
-
-            # project directories
+            # instantiate config file sections
             structure_params = self.config.get('STRUCTURE', None)
-
-            # use the run directory provided by the user if present
-            self.run_dir = params.get('run_dir', structure_params.get('run_dir', None))
-            self.input_dir = os.path.join(self.run_dir, structure_params.get('in_dir', 'inputs'))
-            self.output_dir = self.get_outdir(os.path.join(self.run_dir, structure_params.get('out_dir', 'outputs')))
-
-            # input data directories
             input_params = self.config.get('INPUTS', None)
-            self.allocation_dir = os.path.join(self.input_dir, input_params.get('allocation_dir', 'allocation'))
-            self.observed_dir = os.path.join(self.input_dir, input_params.get('observed_dir', 'observed'))
-            self.constraints_dir = os.path.join(self.input_dir, input_params.get('constraints_dir', 'constraints'))
-            self.projected_dir = os.path.join(self.input_dir, input_params.get('projected_dir', 'projected'))
-            self.reference_dir = os.path.join(self.input_dir, input_params.get('reference_dir', 'reference'))
-
-            # allocation files
             allocation_params = input_params.get('ALLOCATION', None)
-            self.spatial_allocation_file = os.path.join(self.allocation_dir, allocation_params.get('spatial_allocation_file', 'spatial_allocation.csv'))
-            self.gcam_allocation_file = os.path.join(self.allocation_dir, allocation_params.get('gcam_allocation_file', 'gcam_allocation.csv'))
-            self.kernel_allocation_file = os.path.join(self.allocation_dir, allocation_params.get('kernel_allocation_file', 'kernel_density_weighting.csv'))
-            self.transition_order_file = os.path.join(self.allocation_dir, allocation_params.get('transition_order_file', 'transition_priority.csv'))
-            self.treatment_order_file = os.path.join(self.allocation_dir, allocation_params.get('treatment_order_file', 'treatment_order.csv'))
-            self.constraints_file = os.path.join(self.allocation_dir, allocation_params.get('constraints_file', 'constraint_weighting.csv'))
-
-            # observed data
             observed_params = input_params.get('OBSERVED', None)
-            self.observed_lu_file = os.path.join(self.observed_dir, observed_params.get('observed_lu_file', 'modis_2005_lc_monfreda_0p25deg_reg32aez.zip'))
-
-            # projected data
             projected_params = input_params.get('PROJECTED', None)
-            self.projected_lu_file = os.path.join(self.projected_dir, projected_params.get('projected_lu_file', 'gcam_ref_scenario_reg32aez.csv'))
-
-            # reference data
             reference_params = input_params.get('REFERENCE', None)
-            self.gcam_region_names_file = os.path.join(self.reference_dir, reference_params.get('gcam_region_names_file', 'gcam_regions_32.csv'))
-            self.gcam_region_coords_file = os.path.join(self.reference_dir, reference_params.get('gcam_region_coords_file', 'regioncoord.csv'))
-            self.gcam_country_coords_file = os.path.join(self.reference_dir, reference_params.get('gcam_country_coords_file', 'countrycoord.csv'))
-
-            # outputs directories
             output_params = self.config.get('OUTPUTS', None)
-            self.diagnostics_output_dir = os.path.join(self.output_dir, output_params.get('diagnostics_output_dir', 'diagnostics'))
-            self.log_output_dir = os.path.join(self.output_dir, output_params.get('log_output_dir', 'log_files'))
-            self.kernel_maps_output_dir = os.path.join(self.output_dir, output_params.get('kernel_maps_output_dir', 'kernel_density'))
-            self.transitions_tabular_output_dir = os.path.join(self.output_dir, output_params.get('transitions_tabular_output_dir', 'transition_tabular'))
-            self.transitions_maps_output_dir = os.path.join(self.output_dir, output_params.get('transitions_maps_output_dir', 'transition_maps'))
-            self.intensification_pass1_output_dir = os.path.join(self.output_dir, output_params.get('intensification_pass1_output_dir', 'luc_intensification_pass1'))
-            self.intensification_pass2_output_dir = os.path.join(self.output_dir, output_params.get('intensification_pass2_output_dir', 'luc_intensification_pass2'))
-            self.extensification_output_dir = os.path.join(self.output_dir, output_params.get('extensification_output_dir', 'luc_extensification'))
-            self.luc_timestep = os.path.join(self.output_dir, output_params.get('luc_timestep', 'luc_timestep'))
-            self.lu_csv_output_dir = os.path.join(self.output_dir, output_params.get('lu_csv_output_dir', 'spatial_landcover_tabular'))
-            self.lu_netcdf_output_dir = os.path.join(self.output_dir, output_params.get('lu_netcdf_output_dir', 'spatial_landcover_netcdf'))
-            self.lu_shapefile_output_dir = os.path.join(self.output_dir, output_params.get('lu_shapefile_output_dir', 'spatial_landcover_shapefile'))
-
-            # diagnostics
             diagnostic_params = output_params.get('DIAGNOSTICS', None)
-            self.harmonization_coefficent_array = os.path.join(self.diagnostics_output_dir, diagnostic_params.get('harmonization_coefficent_array', 'harmonization_coeff.npy'))
-            self.intensification_pass1_file = os.path.join(self.diagnostics_output_dir, diagnostic_params.get('intensification_pass1_file', 'intensification_pass_one_diag.csv'))
-            self.intensification_pass2_file = os.path.join(self.diagnostics_output_dir, diagnostic_params.get('intensification_pass2_file', 'intensification_pass_two_diag.csv'))
-            self.extensification_file = os.path.join(self.diagnostics_output_dir, diagnostic_params.get('extensification_file', 'expansion_diag.csv'))
+            run_params = self.config.get('PARAMS', None)
 
-            # run parameters
-            self.model = run_params.get('model', 'GCAM')
-            self.metric = run_params.get('metric', 'AEZ')
-            self.run_desc = run_params.get('run_desc', 'demeter_example')
-            self.agg_level = self.valid_integer(run_params.get('agg_level', 2), 'agg_level', [1, 2])
-            self.observed_id_field = run_params.get('observed_id_field', 'fid')
-            self.start_year = self.ck_yr(run_params.get('start_year', '2005'), 'start_year')
-            self.end_year = self.ck_yr(run_params.get('end_year', '2010'), 'end_year')
-            self.use_constraints = self.valid_integer(run_params.get('use_constraints', 1), 'use_constraints', [0, 1])
-            self.spatial_resolution = self.valid_limit(run_params.get('spatial_resolution', 0.25), 'spatial_resolution', [0.0, 1000000.0], 'float')
-            self.errortol = self.valid_limit(run_params.get('errortol', 0.001), 'errortol', [0.0, 1000000.0], 'float')
-            self.timestep = self.valid_limit(run_params.get('timestep', 1), 'timestep', [1, 1000000], 'int')
-            self.proj_factor = self.valid_limit(run_params.get('proj_factor', 1000), 'proj_factor', [1, 10000000000], 'int')
-            self.diagnostic = self.valid_integer(run_params.get('diagnostic', 0), 'diagnostic', [0, 1])
-            self.intensification_ratio = self.valid_limit(run_params.get('intensification_ratio', 0.8), 'intensification_ratio', [0.0, 1.0], 'float')
-            self.stochastic_expansion = self.valid_integer(run_params.get('stochastic_expansion', 0), 'stochastic_expansion', [0, 1])
-            self.selection_threshold = self.valid_limit(run_params.get('selection_threshold', 0.75), 'intensification_ratio', [0.0, 1.0], 'float')
-            self.kernel_distance = self.valid_limit(run_params.get('kernel_distance', 10), 'kernel_distance', [0, 10000000000], 'int')
-            self.map_kernels = self.valid_integer(run_params.get('map_kernels', 0), 'map_kernels', [0, 1])
-            self.map_luc_pft = self.valid_integer(run_params.get('map_luc_pft', 0), 'map_luc_pft', [0, 1])
-            self.map_luc_steps = self.valid_integer(run_params.get('map_luc_steps', 0), 'map_luc_steps', [0, 1])
-            self.map_transitions = self.valid_integer(run_params.get('map_transitions', 0), 'map_transitions', [0, 1])
-            self.target_years_output = self.set_target(run_params.get('target_years_output', 'all'))
-            self.save_tabular = self.valid_integer(run_params.get('save_tabular', 1), 'save_tabular', [0, 1])
-            self.tabular_units = self.valid_string(run_params.get('tabular_units', 'sqkm'), 'tabular_units', ['sqkm', 'fraction'])
-            self.save_transitions = self.valid_integer(run_params.get('save_transitions', 0), 'save_transitions', [0, 1])
-            self.save_shapefile = self.valid_integer(run_params.get('save_shapefile', 0), 'save_shapefile', [0, 1])
-            self.save_netcdf_yr = self.valid_integer(run_params.get('save_netcdf_yr', 0), 'save_netcdf_yr', [0, 1])
-            self.save_netcdf_lc = self.valid_integer(run_params.get('save_netcdf_lc', 0), 'save_netcdf_lc', [0, 1])
-            self.save_ascii_max = self.valid_integer(run_params.get('save_ascii_max', 0), 'save_ascii_max', [0, 1])
+        # scenario is used to build the output directory name
+        self.scenario = run_params.get('scenario', 'example')
+
+        # use the run directory provided by the user if present
+        self.run_dir = params.get('run_dir', structure_params.get('run_dir', None))
+
+        self.input_dir = os.path.join(self.run_dir, structure_params.get('in_dir', 'inputs'))
+        self.output_dir = self.get_outdir(os.path.join(self.run_dir, structure_params.get('out_dir', 'outputs')))
+
+        # input data directories
+        self.allocation_dir = os.path.join(self.input_dir, input_params.get('allocation_dir', 'allocation'))
+        self.observed_dir = os.path.join(self.input_dir, input_params.get('observed_dir', 'observed'))
+        self.constraints_dir = os.path.join(self.input_dir, input_params.get('constraints_dir', 'constraints'))
+        self.projected_dir = os.path.join(self.input_dir, input_params.get('projected_dir', 'projected'))
+        self.reference_dir = os.path.join(self.input_dir, input_params.get('reference_dir', 'reference'))
+
+        # allocation files
+        self.spatial_allocation_file = os.path.join(self.allocation_dir, allocation_params.get('spatial_allocation_file', 'spatial_allocation.csv'))
+        self.gcam_allocation_file = os.path.join(self.allocation_dir, allocation_params.get('gcam_allocation_file', 'gcam_allocation.csv'))
+        self.kernel_allocation_file = os.path.join(self.allocation_dir, allocation_params.get('kernel_allocation_file', 'kernel_density_weighting.csv'))
+        self.transition_order_file = os.path.join(self.allocation_dir, allocation_params.get('transition_order_file', 'transition_priority.csv'))
+        self.treatment_order_file = os.path.join(self.allocation_dir, allocation_params.get('treatment_order_file', 'treatment_order.csv'))
+        self.constraints_file = os.path.join(self.allocation_dir, allocation_params.get('constraints_file', 'constraint_weighting.csv'))
+
+        # observed data
+        self.observed_lu_file = os.path.join(self.observed_dir, observed_params.get('observed_lu_file', 'modis_2005_lc_monfreda_0p25deg_reg32aez.zip'))
+
+        # projected data
+        self.projected_lu_file = os.path.join(self.projected_dir, projected_params.get('projected_lu_file', 'gcam_ref_scenario_reg32aez.csv'))
+        self.gcam_database = os.path.join(self.projected_dir, projected_params.get('gcam_database', ''))
+        self.gcam_query = os.path.join(self.projected_dir, projected_params.get('gcam_query', ''))
+        self.crop_type = self.valid_string(projected_params.get('crop_type', 'BOTH').upper(), 'crop_type', ['IRR', 'RFD', 'BOTH'])
+
+        if len(os.path.basename(self.gcam_database)) == 0:
+            self.gcam_database_dir = os.path.dirname(self.gcam_database)
+            self.gcam_database_name = os.path.basename(self.gcam_database)
+
+        # reference data
+        self.gcam_region_names_file = os.path.join(self.reference_dir, reference_params.get('gcam_region_names_file', 'gcam_regions_32.csv'))
+        self.gcam_region_coords_file = os.path.join(self.reference_dir, reference_params.get('gcam_region_coords_file', 'regioncoord.csv'))
+        self.gcam_country_coords_file = os.path.join(self.reference_dir, reference_params.get('gcam_country_coords_file', 'countrycoord.csv'))
+        self.gcam_basin_names_file = os.path.join(self.reference_dir, reference_params.get('gcam_basin_names_file', 'gcam_basin_lookup.csv'))
+
+        # outputs directories
+        self.diagnostics_output_dir = os.path.join(self.output_dir, output_params.get('diagnostics_output_dir', 'diagnostics'))
+        self.log_output_dir = os.path.join(self.output_dir, output_params.get('log_output_dir', 'log_files'))
+        self.kernel_maps_output_dir = os.path.join(self.output_dir, output_params.get('kernel_maps_output_dir', 'kernel_density'))
+        self.transitions_tabular_output_dir = os.path.join(self.output_dir, output_params.get('transitions_tabular_output_dir', 'transition_tabular'))
+        self.transitions_maps_output_dir = os.path.join(self.output_dir, output_params.get('transitions_maps_output_dir', 'transition_maps'))
+        self.intensification_pass1_output_dir = os.path.join(self.output_dir, output_params.get('intensification_pass1_output_dir', 'luc_intensification_pass1'))
+        self.intensification_pass2_output_dir = os.path.join(self.output_dir, output_params.get('intensification_pass2_output_dir', 'luc_intensification_pass2'))
+        self.extensification_output_dir = os.path.join(self.output_dir, output_params.get('extensification_output_dir', 'luc_extensification'))
+        self.luc_timestep = os.path.join(self.output_dir, output_params.get('luc_timestep', 'luc_timestep'))
+        self.lu_csv_output_dir = os.path.join(self.output_dir, output_params.get('lu_csv_output_dir', 'spatial_landcover_tabular'))
+        self.lu_netcdf_output_dir = os.path.join(self.output_dir, output_params.get('lu_netcdf_output_dir', 'spatial_landcover_netcdf'))
+        self.lu_shapefile_output_dir = os.path.join(self.output_dir, output_params.get('lu_shapefile_output_dir', 'spatial_landcover_shapefile'))
+
+        # diagnostics
+        self.harmonization_coefficent_array = os.path.join(self.diagnostics_output_dir, diagnostic_params.get('harmonization_coefficent_array', 'harmonization_coeff.npy'))
+        self.intensification_pass1_file = os.path.join(self.diagnostics_output_dir, diagnostic_params.get('intensification_pass1_file', 'intensification_pass_one_diag.csv'))
+        self.intensification_pass2_file = os.path.join(self.diagnostics_output_dir, diagnostic_params.get('intensification_pass2_file', 'intensification_pass_two_diag.csv'))
+        self.extensification_file = os.path.join(self.diagnostics_output_dir, diagnostic_params.get('extensification_file', 'expansion_diag.csv'))
+
+        # run parameters
+        self.model = run_params.get('model', 'GCAM')
+        self.metric = run_params.get('metric', 'AEZ')
+        self.run_desc = run_params.get('run_desc', 'demeter_example')
+        self.agg_level = self.valid_integer(run_params.get('agg_level', 2), 'agg_level', [1, 2])
+        self.observed_id_field = run_params.get('observed_id_field', 'fid')
+        self.start_year = self.ck_yr(run_params.get('start_year', '2005'), 'start_year')
+        self.end_year = self.ck_yr(run_params.get('end_year', '2010'), 'end_year')
+        self.use_constraints = self.valid_integer(run_params.get('use_constraints', 1), 'use_constraints', [0, 1])
+        self.spatial_resolution = self.valid_limit(run_params.get('spatial_resolution', 0.25), 'spatial_resolution', [0.0, 1000000.0], 'float')
+        self.errortol = self.valid_limit(run_params.get('errortol', 0.001), 'errortol', [0.0, 1000000.0], 'float')
+        self.timestep = self.valid_limit(run_params.get('timestep', 1), 'timestep', [1, 1000000], 'int')
+        self.proj_factor = self.valid_limit(run_params.get('proj_factor', 1000), 'proj_factor', [1, 10000000000], 'int')
+        self.diagnostic = self.valid_integer(run_params.get('diagnostic', 0), 'diagnostic', [0, 1])
+        self.intensification_ratio = self.valid_limit(run_params.get('intensification_ratio', 0.8), 'intensification_ratio', [0.0, 1.0], 'float')
+        self.stochastic_expansion = self.valid_integer(run_params.get('stochastic_expansion', 0), 'stochastic_expansion', [0, 1])
+        self.selection_threshold = self.valid_limit(run_params.get('selection_threshold', 0.75), 'intensification_ratio', [0.0, 1.0], 'float')
+        self.kernel_distance = self.valid_limit(run_params.get('kernel_distance', 10), 'kernel_distance', [0, 10000000000], 'int')
+        self.map_kernels = self.valid_integer(run_params.get('map_kernels', 0), 'map_kernels', [0, 1])
+        self.map_luc_pft = self.valid_integer(run_params.get('map_luc_pft', 0), 'map_luc_pft', [0, 1])
+        self.map_luc_steps = self.valid_integer(run_params.get('map_luc_steps', 0), 'map_luc_steps', [0, 1])
+        self.map_transitions = self.valid_integer(run_params.get('map_transitions', 0), 'map_transitions', [0, 1])
+        self.target_years_output = self.set_target(run_params.get('target_years_output', 'all'))
+        self.save_tabular = self.valid_integer(run_params.get('save_tabular', 1), 'save_tabular', [0, 1])
+        self.tabular_units = self.valid_string(run_params.get('tabular_units', 'sqkm'), 'tabular_units', ['sqkm', 'fraction'])
+        self.save_transitions = self.valid_integer(run_params.get('save_transitions', 0), 'save_transitions', [0, 1])
+        self.save_shapefile = self.valid_integer(run_params.get('save_shapefile', 0), 'save_shapefile', [0, 1])
+        self.save_netcdf_yr = self.valid_integer(run_params.get('save_netcdf_yr', 0), 'save_netcdf_yr', [0, 1])
+        self.save_netcdf_lc = self.valid_integer(run_params.get('save_netcdf_lc', 0), 'save_netcdf_lc', [0, 1])
+        self.save_ascii_max = self.valid_integer(run_params.get('save_ascii_max', 0), 'save_ascii_max', [0, 1])
 
         # create and validate constraints input file full paths
         self.constraint_files = self.get_constraints()

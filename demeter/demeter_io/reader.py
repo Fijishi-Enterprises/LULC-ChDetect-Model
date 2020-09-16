@@ -11,6 +11,8 @@ import numpy as np
 import os
 import pandas as pd
 
+import gcam_reader
+
 
 class ValidationException(Exception):
     """Validation exception for error in runtime test."""
@@ -187,8 +189,7 @@ def _get_steps(df, start_step, end_step):
 
 
 def read_gcam_land(db_path, f_queries, d_basin_name, subreg, crop_water_src):
-    """
-    Query GCAM database for irrigated land area per region, subregion, and crop type.
+    """Query GCAM database for irrigated land area per region, subregion, and crop type.
 
     :param db_path:         Full path to the input GCAM database
     :param f_queries:       Full path to the XML query file
@@ -200,7 +201,6 @@ def read_gcam_land(db_path, f_queries, d_basin_name, subreg, crop_water_src):
                             crop type, and irrigated area per year in thousands km2
 
     """
-    import gcam_reader
 
     # instantiate GCAM db
     db_file = os.path.basename(db_path)
@@ -254,8 +254,6 @@ def read_gcam_land(db_path, f_queries, d_basin_name, subreg, crop_water_src):
     piv.columns = piv.columns.astype(str)
 
     return piv
-
-
 
 def read_gcam_file(log, gcam_data, gcam_landclasses, start_yr, end_yr, scenario, region_dict, agg_level, metric_seq,
                    area_factor=1000):
