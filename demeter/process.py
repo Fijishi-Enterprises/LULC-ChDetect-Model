@@ -149,7 +149,7 @@ class ProcessStep:
         """
 
         # convert metric_id back to the original
-        revert_metric_dict = {self.s.sequence_metric_dict[k]: k for k in self.s.sequence_metric_dict.iterkeys()}
+        revert_metric_dict = {self.s.sequence_metric_dict[k]: k for k in self.s.sequence_metric_dict.keys()}
         orig_spat_aez = np.vectorize(revert_metric_dict.get)(self.s.spat_aez)
 
         # convert land cover from sqkm per grid cell per land class to fraction for mapping (n_grids, n_landclasses)
