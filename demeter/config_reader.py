@@ -134,8 +134,8 @@ class ReadConfig:
         self.run_desc = run_params.get('run_desc', 'demeter_example')
         self.agg_level = self.valid_integer(run_params.get('agg_level', 2), 'agg_level', [1, 2])
         self.observed_id_field = run_params.get('observed_id_field', 'fid')
-        self.start_year = self.ck_yr(run_params.get('start_year', '2005'), 'start_year')
-        self.end_year = self.ck_yr(run_params.get('end_year', '2010'), 'end_year')
+        self.start_year = self.ck_yr(run_params.get('start_year', 2005), 'start_year')
+        self.end_year = self.ck_yr(run_params.get('end_year', 2010), 'end_year')
         self.use_constraints = self.valid_integer(run_params.get('use_constraints', 1), 'use_constraints', [0, 1])
         self.spatial_resolution = self.valid_limit(run_params.get('spatial_resolution', 0.25), 'spatial_resolution', [0.0, 1000000.0], 'float')
         self.errortol = self.valid_limit(run_params.get('errortol', 0.001), 'errortol', [0.0, 1000000.0], 'float')
@@ -239,18 +239,37 @@ class ReadConfig:
             return ts
 
     @staticmethod
-    def ck_yr(y, p):
-        """
-        Make sure year is four digits.
+    def ck_yr(y, p, lower_year=500, upper_year=3000):
+        """Make sure year is four digits.
 
         :param y:           year
         :param p:           name of parameter
+
         :return:            int
+
         """
-        if len(y) != 4:
-            raise ValidationException('Year must be in four digit format (e.g., 2005) for parameter "{}". Value entered was "{}". Exiting...'.format(p, y))
+
+        if type(y) == int:
+
+            if y < lower_year:
+                raise ValidationException("'{}' must be >= {}".format(p, lower_year))
+
+            if y > upper_year:
+                raise ValidationException("'{}' must be <= {}".format(p, lower_year))
         else:
-            return int(y)
+            try:
+                y = int(y)
+
+                if y < lower_year:
+                    raise ValidationException("'{}' must be >= {}".format(p, lower_year))
+
+                if y > upper_year:
+                    raise ValidationException("'{}' must be <= {}".format(p, lower_year))
+
+            except ValueError:
+                raise ValidationException('Year must be in four digit format (e.g., 2005) for parameter "{}". Value entered was "{}". Exiting...'.format(p, y))
+
+        return y
 
     @staticmethod
     def vaild_length(value, parameter, max_characters=30):
