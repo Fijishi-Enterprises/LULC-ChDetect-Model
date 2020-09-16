@@ -7,7 +7,9 @@ Copyright (c) 2017, Battelle Memorial Institute
 Open source under license BSD 2-Clause - see LICENSE and DISCLAIMER
 
 @author:  Chris R. Vernon (PNNL); Yannick le Page (niquya@gmail.com)
+
 """
+
 import numpy as np
 import pandas as pd
 import time
@@ -21,14 +23,13 @@ from demeter.weight.kernel_density import KernelDensity
 
 
 class Stage:
-    """
-    Prepare data for processing.
-    """
+    """Prepare data for processing."""
 
     def __init__(self, c, log):
 
         self.c = c
         self.log = log
+        self.d_bsnnm_id = None
         self.d_regnm_id = None
         self.d_reg_nm = None
         self.final_landclasses = None
@@ -102,6 +103,9 @@ class Stage:
 
         # GCAM region_id: region_name as dictionary
         self.d_regid_nm = rdr.to_dict(self.c.gcam_region_names_file, header=True, swap=False)
+
+        # GCAM basin_id: basin_glu_name as dictionary
+        self.d_bsnnm_id = rdr.to_dict(self.c.gcam_bsnnamefile, header=True, swap=True, value_col=2)
 
     def read_allocation(self):
         """
@@ -180,8 +184,14 @@ class Stage:
         # set start time
         t0 = time.time()
 
+        if self.c.db_path is None:
+            lu = self.c.lu_file
+        else:
+            lu = rdr.read_gcam_land(self.c.db_path, self.c.db_queries, self.d_bsnnm_id,
+                                    self.c.metric, self.c.crop_water_src)
+
         # extract and process data contained from the land allocation GCAM output file
-        gcam_data = rdr.read_gcam_file(self.log, self.c.projected_lu_file, self.gcam_landclasses, start_yr=self.c.start_year,
+        gcam_data = rdr.read_gcam_file(self.log, lu, self.gcam_landclasses, start_yr=self.c.start_year,
                                        end_yr=self.c.end_year, scenario=self.c.scenario, region_dict=self.d_regnm_id,
                                        agg_level=self.c.agg_level, area_factor=self.c.proj_factor,
                                        metric_seq=self.metric_sequence_list)
