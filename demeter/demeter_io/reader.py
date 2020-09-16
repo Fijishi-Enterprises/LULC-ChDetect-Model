@@ -65,7 +65,7 @@ def to_list(f, header=True, delim=','):
     """
 
     l = []
-    with open(f, 'rU') as get:
+    with open(f) as get:
         for idx, line in enumerate(get):
 
             # skip header if exists
