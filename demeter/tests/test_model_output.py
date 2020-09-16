@@ -28,7 +28,7 @@ class TestOutputs(unittest.TestCase):
         """Test for projection outputs by passing arguments"""
 
         # run demeter without using configuration file
-        run = Demeter(run_dir=TestOutputs.RUN_DIR, target_years_output=2010)
+        run = Demeter(run_dir=TestOutputs.RUN_DIR, target_years_output="2010")
         run.execute()
 
         # read in run data from rasters to arrays
@@ -40,7 +40,7 @@ class TestOutputs(unittest.TestCase):
         pd.testing.assert_frame_equal(TestOutputs.COMP_DF, run_df)
 
         # remove run directory
-        #shutil.rmtree(run.c.output_dir)
+        shutil.rmtree(run.c.output_dir)
 
     def test_proj_outputs_using_config(self):
         """Test for projection outputs using a config file"""
