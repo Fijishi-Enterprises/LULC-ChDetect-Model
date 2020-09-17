@@ -1,0 +1,8 @@
+category,forest,shrub,grass,urban,snow,sparse,crops
+forest,1,0,0,0,0,0,0
+shrub,0,1,0,0,0,0,0
+grass,0,0,1,0,0,0,0
+urban,0,0,0,1,0,0,0
+snow,0,0,0,0,1,0,0
+sparse,0,0,0,0,0,1,0
+crops,0,0,0,0,0,0,1

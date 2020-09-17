@@ -1,3 +1,6 @@
+# example dir for docker
+example/
+
 # virtual environments
 venv_2.7/
 

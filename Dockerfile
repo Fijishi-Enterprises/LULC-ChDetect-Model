@@ -1,5 +1,5 @@
 # base image
-FROM python:2.7
+FROM python:3.6
 
 # set env
 ENV PYTHONUNBUFFERED=1 \
@@ -12,7 +12,8 @@ WORKDIR /code
 
 # install dependencies
 RUN pip install --upgrade pip \
-    &&  pip install --trusted-host pypi.python.org --requirement requirements.txt
+    && pip install git+https://github.com/JGCRI/gcam_reader.git \
+    && pip install --trusted-host pypi.python.org --requirement requirements.txt
 
 # copy package
 COPY . /code

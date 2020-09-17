@@ -255,6 +255,7 @@ def read_gcam_land(db_path, f_queries, d_basin_name, subreg, crop_water_src):
 
     return piv
 
+
 def read_gcam_file(log, gcam_data, gcam_landclasses, start_yr, end_yr, scenario, region_dict, agg_level, metric_seq,
                    area_factor=1000):
     """

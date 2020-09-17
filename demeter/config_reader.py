@@ -12,6 +12,7 @@ import datetime
 import logging
 import os
 import sys
+import pkg_resources
 
 from configobj import ConfigObj
 
@@ -69,10 +70,15 @@ class ReadConfig:
         self.scenario = run_params.get('scenario', 'example')
 
         # use the run directory provided by the user if present
-        self.run_dir = params.get('run_dir', structure_params.get('run_dir', None))
+        if structure_params.get('run_dir') is None:
+            self.run_dir = pkg_resources.resource_filename('demeter', 'tests/data')
+        else:
+            self.run_dir = params.get('run_dir', structure_params.get('run_dir', pkg_resources.resource_filename('demeter', 'tests/data')))
 
-        self.input_dir = os.path.join(self.run_dir, structure_params.get('in_dir', 'inputs'))
-        self.output_dir = self.get_outdir(os.path.join(self.run_dir, structure_params.get('out_dir', 'outputs')))
+        self.log.info(f'Using `run_dir`:  {self.run_dir}')
+
+        self.input_dir = os.path.join(self.run_dir, structure_params.get('input_dir', 'inputs'))
+        self.output_dir = self.get_outdir(os.path.join(self.run_dir, structure_params.get('output_dir', 'outputs')))
 
         # input data directories
         self.allocation_dir = os.path.join(self.input_dir, input_params.get('allocation_dir', 'allocation'))
@@ -82,20 +88,20 @@ class ReadConfig:
         self.reference_dir = os.path.join(self.input_dir, input_params.get('reference_dir', 'reference'))
 
         # allocation files
-        self.spatial_allocation_file = os.path.join(self.allocation_dir, allocation_params.get('spatial_allocation_file', 'spatial_allocation.csv'))
-        self.gcam_allocation_file = os.path.join(self.allocation_dir, allocation_params.get('gcam_allocation_file', 'gcam_allocation.csv'))
+        self.spatial_allocation_file = os.path.join(self.allocation_dir, allocation_params.get('spatial_allocation_file', 'gcam_regbasin_modis_v6_type5_5arcmin_observed_alloc.csv'))
+        self.gcam_allocation_file = os.path.join(self.allocation_dir, allocation_params.get('gcam_allocation_file', 'gcam_regbasin_modis_v6_type5_5arcmin_projected_alloc.csv'))
         self.kernel_allocation_file = os.path.join(self.allocation_dir, allocation_params.get('kernel_allocation_file', 'kernel_density_weighting.csv'))
         self.transition_order_file = os.path.join(self.allocation_dir, allocation_params.get('transition_order_file', 'transition_priority.csv'))
         self.treatment_order_file = os.path.join(self.allocation_dir, allocation_params.get('treatment_order_file', 'treatment_order.csv'))
         self.constraints_file = os.path.join(self.allocation_dir, allocation_params.get('constraints_file', 'constraint_weighting.csv'))
 
         # observed data
-        self.observed_lu_file = os.path.join(self.observed_dir, observed_params.get('observed_lu_file', 'modis_2005_lc_monfreda_0p25deg_reg32aez.zip'))
+        self.observed_lu_file = os.path.join(self.observed_dir, observed_params.get('observed_lu_file', 'gcam_reg32_basin235_modis_v6_2010_5arcmin_sqdeg_wgs84_11Jul2019.zip'))
 
         # projected data
-        self.projected_lu_file = os.path.join(self.projected_dir, projected_params.get('projected_lu_file', 'gcam_ref_scenario_reg32aez.csv'))
+        self.projected_lu_file = os.path.join(self.projected_dir, projected_params.get('projected_lu_file', 'gcam_ref_scenario_reg32_basin235_v5p1p3.csv'))
         self.gcam_database = os.path.join(self.projected_dir, projected_params.get('gcam_database', ''))
-        self.gcam_query = os.path.join(self.projected_dir, projected_params.get('gcam_query', ''))
+        self.gcam_query = os.path.join(self.projected_dir, projected_params.get('gcam_query', 'query_land_reg32_basin235_gcam5p0.xml'))
         self.crop_type = self.valid_string(projected_params.get('crop_type', 'BOTH').upper(), 'crop_type', ['IRR', 'RFD', 'BOTH'])
 
         if len(os.path.basename(self.gcam_database)) == 0:
@@ -130,10 +136,10 @@ class ReadConfig:
 
         # run parameters
         self.model = run_params.get('model', 'GCAM')
-        self.metric = run_params.get('metric', 'AEZ')
+        self.metric = run_params.get('metric', 'BASIN')
         self.run_desc = run_params.get('run_desc', 'demeter_example')
         self.agg_level = self.valid_integer(run_params.get('agg_level', 2), 'agg_level', [1, 2])
-        self.observed_id_field = run_params.get('observed_id_field', 'fid')
+        self.observed_id_field = run_params.get('observed_id_field', 'target_fid')
         self.start_year = self.ck_yr(run_params.get('start_year', 2005), 'start_year')
         self.end_year = self.ck_yr(run_params.get('end_year', 2010), 'end_year')
         self.use_constraints = self.valid_integer(run_params.get('use_constraints', 1), 'use_constraints', [0, 1])

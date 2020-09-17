@@ -136,17 +136,25 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Run Demeter.')
 
-    parser.add_argument('--config', dest='config', action='store', type=str, help='Full path with file name and extension to the input configuration INI file')
-    parser.add_argument('--run_dir', dest='run_dir', action='store', type=str, help='Full path to the directory containing the input and output directories')
+    parser.add_argument('--config_file', dest='config_file', action='store', type=str, default=None, help='Full path with file name and extension to the input configuration INI file')
+    parser.add_argument('--run_dir', dest='run_dir', action='store', type=str, default='/code/demeter/tests/data', help='Full path to the directory containing the input and output directories')
+    parser.add_argument('--start_year', dest='start_year', action='store', type=str, default=2005, help='Year to start the downscaling')
+    parser.add_argument('--end_year', dest='end_year', action='store', type=str, default=2010, help='Year to process through for the downscaling')
+    parser.add_argument('--target_years_output', dest='target_years_output', action='store', type=str, default='all', help="years to save data for, default is 'all'; otherwise a semicolon delimited string e.g, 2005;2050")
 
     args = parser.parse_args()
 
     if os.path.isfile is False:
         print('ERROR:  Config file not found.')
-        print('You entered:  {0}'.format(args.config))
+        print('You entered:  {0}'.format(args.config_file))
         print('Please enter a full path file name with extension to config file and retry.')
         raise ValidationException
 
     # instantiate and run demeter
-    dm = Demeter(config_file=args.config, run_dir=args.run_dir)
+    dm = Demeter(config_file=args.config_file,
+                 run_dir=args.run_dir,
+                 start_year=args.start_year,
+                 end_year=args.end_year,
+                 target_years_output=args.target_years_output)
+
     dm.execute()

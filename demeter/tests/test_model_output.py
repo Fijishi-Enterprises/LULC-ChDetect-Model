@@ -27,8 +27,14 @@ class TestOutputs(unittest.TestCase):
     def test_proj_outputs_using_args(self):
         """Test for projection outputs by passing arguments"""
 
+        self.gcam_database = os.path.join(self.projected_dir, projected_params.get('gcam_database', ''))
+        self.gcam_query = os.path.join(self.projected_dir,
+                                       projected_params.get('gcam_query', 'query_land_reg32_basin235_gcam5p0.xml'))
+        self.crop_type = self.valid_string(projected_params.get('crop_type', 'BOTH').upper(), 'crop_type',
+                                           ['IRR', 'RFD', 'BOTH'])
+
         # run demeter without using configuration file
-        run = Demeter(run_dir=TestOutputs.RUN_DIR, target_years_output="2010")
+        run = Demeter(target_years_output="2010", gcam_database='')
         run.execute()
 
         # read in run data from rasters to arrays
