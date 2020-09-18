@@ -188,7 +188,7 @@ def _get_steps(df, start_step, end_step):
     return l
 
 
-def read_gcam_land(db_path, f_queries, d_basin_name, subreg, crop_water_src):
+def read_gcam_land(db_path, db_file, f_queries, d_basin_name, subreg, crop_water_src):
     """Query GCAM database for irrigated land area per region, subregion, and crop type.
 
     :param db_path:         Full path to the input GCAM database
@@ -203,8 +203,6 @@ def read_gcam_land(db_path, f_queries, d_basin_name, subreg, crop_water_src):
     """
 
     # instantiate GCAM db
-    db_file = os.path.basename(db_path)
-    db_path = os.path.dirname(db_path)
     conn = gcam_reader.LocalDBConn(db_path, db_file, suppress_gabble=False)
 
     # get queries
@@ -215,11 +213,7 @@ def read_gcam_land(db_path, f_queries, d_basin_name, subreg, crop_water_src):
 
     # split 'land-allocation' column into components
     if subreg == 'AEZ':
-        # expected format: landclassAEZ##USE
-        cnames = ['landclass', 'metric_id']
-        land_alloc[cnames] = land_alloc['land-allocation'].str.split('AEZ', expand=True)
-        land_alloc['use'] = land_alloc['metric_id'].str[-3:]
-        land_alloc['metric_id'] = land_alloc['metric_id'].str[:2]
+        raise ValueError("Using AEZs are no longer supported with `gcam_reader`")
 
     elif subreg == 'BASIN':
         # expected format: landclass_basin-glu-name_USE_management
@@ -251,6 +245,7 @@ def read_gcam_land(db_path, f_queries, d_basin_name, subreg, crop_water_src):
                          index=['region', 'landclass', 'metric_id'],
                          columns='Year', fill_value=0)
     piv.reset_index(inplace=True)
+    piv['metric_id'] = piv['metric_id'].astype(np.int64)
     piv.columns = piv.columns.astype(str)
 
     return piv
@@ -282,7 +277,7 @@ def read_gcam_file(log, gcam_data, gcam_landclasses, start_yr, end_yr, scenario,
                                     allregaez:              List of lists, metric ids per region
     """
     # if land allocation data is not already a DataFrame, read GCAM output file and skip title row
-    gdf = gcam_data if isinstance(gcam_data, pd.DataFrame) else pd.read_csv(gcam_data, header=0)
+    gdf = gcam_data if isinstance(gcam_data, pd.DataFrame) else pd.read_csv(gcam_data)
 
     # make sure all land classes in the projected file are in the allocation file and vice versa
     _check_constraints(log, gcam_landclasses, gdf['landclass'].tolist())

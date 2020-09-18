@@ -1,11 +1,13 @@
 # ignore tests dir and contents
-tests/
+demeter/tests/
 
 # git related
 .git
+.cache
 
 # virtual environments
 venv_2.7/
+venv/
 
 # pycharm
 .idea

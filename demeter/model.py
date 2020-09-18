@@ -137,10 +137,11 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Run Demeter.')
 
     parser.add_argument('--config_file', dest='config_file', action='store', type=str, default=None, help='Full path with file name and extension to the input configuration INI file')
-    parser.add_argument('--run_dir', dest='run_dir', action='store', type=str, default='/code/demeter/tests/data', help='Full path to the directory containing the input and output directories')
+    parser.add_argument('--run_dir', dest='run_dir', action='store', type=str, default='/data/demeter_data', help='Full path to the directory containing the input and output directories')
     parser.add_argument('--start_year', dest='start_year', action='store', type=str, default=2005, help='Year to start the downscaling')
     parser.add_argument('--end_year', dest='end_year', action='store', type=str, default=2010, help='Year to process through for the downscaling')
     parser.add_argument('--target_years_output', dest='target_years_output', action='store', type=str, default='all', help="years to save data for, default is 'all'; otherwise a semicolon delimited string e.g, 2005;2050")
+    parser.add_argument('--gcam_database', dest='gcam_database', action='store', type=str, default='/data/gcam_output_data/database_basexdb', help="full path to a GCAM output database")
 
     args = parser.parse_args()
 
@@ -155,6 +156,7 @@ if __name__ == '__main__':
                  run_dir=args.run_dir,
                  start_year=args.start_year,
                  end_year=args.end_year,
-                 target_years_output=args.target_years_output)
+                 target_years_output=args.target_years_output,
+                 gcam_database=args.gcam_database)
 
     dm.execute()

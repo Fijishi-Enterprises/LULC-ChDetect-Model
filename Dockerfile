@@ -1,5 +1,4 @@
-# base image
-FROM python:3.6
+FROM rappdw/docker-java-python:openjdk1.8.0_171-python3.6.6
 
 # set env
 ENV PYTHONUNBUFFERED=1 \

@@ -73,7 +73,7 @@ class ReadConfig:
         if structure_params.get('run_dir') is None:
             self.run_dir = pkg_resources.resource_filename('demeter', 'tests/data')
         else:
-            self.run_dir = params.get('run_dir', structure_params.get('run_dir', pkg_resources.resource_filename('demeter', 'tests/data')))
+            self.run_dir = params.get('run_dir', structure_params.get('run_dir', '/code/example/data'))
 
         self.log.info(f'Using `run_dir`:  {self.run_dir}')
 
@@ -100,11 +100,10 @@ class ReadConfig:
 
         # projected data
         self.projected_lu_file = os.path.join(self.projected_dir, projected_params.get('projected_lu_file', 'gcam_ref_scenario_reg32_basin235_v5p1p3.csv'))
-        self.gcam_database = os.path.join(self.projected_dir, projected_params.get('gcam_database', ''))
-        self.gcam_query = os.path.join(self.projected_dir, projected_params.get('gcam_query', 'query_land_reg32_basin235_gcam5p0.xml'))
+        self.gcam_database = projected_params.get('gcam_database', None)
         self.crop_type = self.valid_string(projected_params.get('crop_type', 'BOTH').upper(), 'crop_type', ['IRR', 'RFD', 'BOTH'])
 
-        if len(os.path.basename(self.gcam_database)) == 0:
+        if self.gcam_database is not None:
             self.gcam_database_dir = os.path.dirname(self.gcam_database)
             self.gcam_database_name = os.path.basename(self.gcam_database)
 
@@ -113,6 +112,7 @@ class ReadConfig:
         self.gcam_region_coords_file = os.path.join(self.reference_dir, reference_params.get('gcam_region_coords_file', 'regioncoord.csv'))
         self.gcam_country_coords_file = os.path.join(self.reference_dir, reference_params.get('gcam_country_coords_file', 'countrycoord.csv'))
         self.gcam_basin_names_file = os.path.join(self.reference_dir, reference_params.get('gcam_basin_names_file', 'gcam_basin_lookup.csv'))
+        self.gcam_query = os.path.join(self.reference_dir, projected_params.get('gcam_query', 'query_land_reg32_basin235_gcam5p0.xml'))
 
         # outputs directories
         self.diagnostics_output_dir = os.path.join(self.output_dir, output_params.get('diagnostics_output_dir', 'diagnostics'))
