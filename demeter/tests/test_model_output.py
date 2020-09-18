@@ -42,6 +42,7 @@ class TestOutputs(unittest.TestCase):
         # remove run directory
         shutil.rmtree(run.c.output_dir)
 
+<<<<<<< HEAD
     # def test_proj_outputs_using_config(self):
     #     """Test for projection outputs using a config file"""
     #
@@ -59,6 +60,25 @@ class TestOutputs(unittest.TestCase):
     #
     #     # remove run directory
     #     shutil.rmtree(run.c.output_dir)
+=======
+    def test_proj_outputs_using_config(self):
+        """Test for projection outputs using a config file"""
+
+        # run demeter without using configuration file
+        run = Demeter(config_file=TestOutputs.CONFIG_FILE, run_dir=TestOutputs.RUN_DIR)
+        run.execute()
+
+        # read in run data from rasters to arrays
+        output_dir = os.path.split(run.c.output_dir)[-1]
+        run_2010 = os.path.join(TestOutputs.RUN_DIR, 'outputs', output_dir, 'spatial_landcover_tabular', 'landcover_2010_timestep.csv')
+        run_df = pd.read_csv(run_2010)
+
+        # test equality
+        pd.testing.assert_frame_equal(TestOutputs.COMP_DF, run_df)
+
+        # remove run directory
+        shutil.rmtree(run.c.output_dir)
+>>>>>>> 19df30dc105093dbc7328e13c33fe85263b2106e
 
 
 if __name__ == '__main__':

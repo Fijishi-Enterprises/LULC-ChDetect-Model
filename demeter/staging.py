@@ -184,12 +184,20 @@ class Stage:
         # set start time
         t0 = time.time()
 
+<<<<<<< HEAD
         if self.c.gcam_database is None:
             self.log.info(f"Using projected GCAM data from:  {self.c.projected_lu_file}")
             lu = self.c.projected_lu_file
         else:
             self.log.info(f"Using projected GCAM data from:  {self.c.gcam_database}")
             lu = rdr.read_gcam_land(self.c.gcam_database_dir, self.c.gcam_database_name, self.c.gcam_query, self.d_bsnnm_id,
+=======
+        if len(os.path.basename(self.c.gcam_database)) == 0:
+            lu = self.c.projected_lu_file
+        else:
+            print("test:  {}".format(self.c.projected_lu_file))
+            lu = rdr.read_gcam_land(self.c.gcam_database_dir, self.c.gcam_query, self.d_bsnnm_id,
+>>>>>>> 19df30dc105093dbc7328e13c33fe85263b2106e
                                     self.c.metric, self.c.crop_type)
 
         # extract and process data contained from the land allocation GCAM output file

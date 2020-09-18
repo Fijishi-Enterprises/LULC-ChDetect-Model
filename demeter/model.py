@@ -135,6 +135,7 @@ class Demeter:
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Run Demeter.')
+<<<<<<< HEAD
 
     parser.add_argument('--config_file', dest='config_file', action='store', type=str, default=None, help='Full path with file name and extension to the input configuration INI file')
     parser.add_argument('--run_dir', dest='run_dir', action='store', type=str, default='/data/demeter_data', help='Full path to the directory containing the input and output directories')
@@ -148,10 +149,22 @@ if __name__ == '__main__':
     if os.path.isfile is False:
         print('ERROR:  Config file not found.')
         print('You entered:  {0}'.format(args.config_file))
+=======
+
+    parser.add_argument('--config', dest='config', action='store', type=str, help='Full path with file name and extension to the input configuration INI file')
+    parser.add_argument('--run_dir', dest='run_dir', action='store', type=str, help='Full path to the directory containing the input and output directories')
+
+    args = parser.parse_args()
+
+    if os.path.isfile is False:
+        print('ERROR:  Config file not found.')
+        print('You entered:  {0}'.format(args.config))
+>>>>>>> 19df30dc105093dbc7328e13c33fe85263b2106e
         print('Please enter a full path file name with extension to config file and retry.')
         raise ValidationException
 
     # instantiate and run demeter
+<<<<<<< HEAD
     dm = Demeter(config_file=args.config_file,
                  run_dir=args.run_dir,
                  start_year=args.start_year,
@@ -159,4 +172,7 @@ if __name__ == '__main__':
                  target_years_output=args.target_years_output,
                  gcam_database=args.gcam_database)
 
+=======
+    dm = Demeter(config_file=args.config, run_dir=args.run_dir)
+>>>>>>> 19df30dc105093dbc7328e13c33fe85263b2106e
     dm.execute()

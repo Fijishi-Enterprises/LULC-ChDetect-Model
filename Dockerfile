@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 FROM rappdw/docker-java-python:openjdk1.8.0_171-python3.6.6
+=======
+# base image
+FROM python:2.7
+>>>>>>> 19df30dc105093dbc7328e13c33fe85263b2106e
 
 # set env
 ENV PYTHONUNBUFFERED=1 \
@@ -11,8 +16,12 @@ WORKDIR /code
 
 # install dependencies
 RUN pip install --upgrade pip \
+<<<<<<< HEAD
     && pip install git+https://github.com/JGCRI/gcam_reader.git \
     && pip install --trusted-host pypi.python.org --requirement requirements.txt
+=======
+    &&  pip install --trusted-host pypi.python.org --requirement requirements.txt
+>>>>>>> 19df30dc105093dbc7328e13c33fe85263b2106e
 
 # copy package
 COPY . /code

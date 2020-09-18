@@ -1,9 +1,15 @@
+<<<<<<< HEAD
 # example dir for docker
 example/
 
 # virtual environments
 venv_2.7/
 
+=======
+# virtual environments
+venv_2.7/
+
+>>>>>>> 19df30dc105093dbc7328e13c33fe85263b2106e
 # pycharm
 .idea
 

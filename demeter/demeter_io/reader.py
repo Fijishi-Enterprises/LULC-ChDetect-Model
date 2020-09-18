@@ -188,7 +188,11 @@ def _get_steps(df, start_step, end_step):
     return l
 
 
+<<<<<<< HEAD
 def read_gcam_land(db_path, db_file, f_queries, d_basin_name, subreg, crop_water_src):
+=======
+def read_gcam_land(db_path, f_queries, d_basin_name, subreg, crop_water_src):
+>>>>>>> 19df30dc105093dbc7328e13c33fe85263b2106e
     """Query GCAM database for irrigated land area per region, subregion, and crop type.
 
     :param db_path:         Full path to the input GCAM database
@@ -203,6 +207,11 @@ def read_gcam_land(db_path, db_file, f_queries, d_basin_name, subreg, crop_water
     """
 
     # instantiate GCAM db
+<<<<<<< HEAD
+=======
+    db_file = os.path.basename(db_path)
+    db_path = os.path.dirname(db_path)
+>>>>>>> 19df30dc105093dbc7328e13c33fe85263b2106e
     conn = gcam_reader.LocalDBConn(db_path, db_file, suppress_gabble=False)
 
     # get queries
@@ -213,7 +222,15 @@ def read_gcam_land(db_path, db_file, f_queries, d_basin_name, subreg, crop_water
 
     # split 'land-allocation' column into components
     if subreg == 'AEZ':
+<<<<<<< HEAD
         raise ValueError("Using AEZs are no longer supported with `gcam_reader`")
+=======
+        # expected format: landclassAEZ##USE
+        cnames = ['landclass', 'metric_id']
+        land_alloc[cnames] = land_alloc['land-allocation'].str.split('AEZ', expand=True)
+        land_alloc['use'] = land_alloc['metric_id'].str[-3:]
+        land_alloc['metric_id'] = land_alloc['metric_id'].str[:2]
+>>>>>>> 19df30dc105093dbc7328e13c33fe85263b2106e
 
     elif subreg == 'BASIN':
         # expected format: landclass_basin-glu-name_USE_management
@@ -245,12 +262,18 @@ def read_gcam_land(db_path, db_file, f_queries, d_basin_name, subreg, crop_water
                          index=['region', 'landclass', 'metric_id'],
                          columns='Year', fill_value=0)
     piv.reset_index(inplace=True)
+<<<<<<< HEAD
     piv['metric_id'] = piv['metric_id'].astype(np.int64)
+=======
+>>>>>>> 19df30dc105093dbc7328e13c33fe85263b2106e
     piv.columns = piv.columns.astype(str)
 
     return piv
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 19df30dc105093dbc7328e13c33fe85263b2106e
 def read_gcam_file(log, gcam_data, gcam_landclasses, start_yr, end_yr, scenario, region_dict, agg_level, metric_seq,
                    area_factor=1000):
     """
@@ -277,7 +300,11 @@ def read_gcam_file(log, gcam_data, gcam_landclasses, start_yr, end_yr, scenario,
                                     allregaez:              List of lists, metric ids per region
     """
     # if land allocation data is not already a DataFrame, read GCAM output file and skip title row
+<<<<<<< HEAD
     gdf = gcam_data if isinstance(gcam_data, pd.DataFrame) else pd.read_csv(gcam_data)
+=======
+    gdf = gcam_data if isinstance(gcam_data, pd.DataFrame) else pd.read_csv(gcam_data, header=0)
+>>>>>>> 19df30dc105093dbc7328e13c33fe85263b2106e
 
     # make sure all land classes in the projected file are in the allocation file and vice versa
     _check_constraints(log, gcam_landclasses, gdf['landclass'].tolist())
